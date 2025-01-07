@@ -128,3 +128,11 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Package lock
+package-lock.json
+
+# Data
+data.db
+files/*
+!files/.gitkeep

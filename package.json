@@ -1,0 +1,27 @@
+{
+  "name": "letovo-archive-website",
+  "version": "0.1.0",
+  "description": "Letovo Archive's website",
+  "main": "index.js",
+  "scripts": {
+    "test": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LetovoArchive/Website.git"
+  },
+  "keywords": [
+    "letovo",
+    "archive",
+    "website"
+  ],
+  "author": "Milk_Cool",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/LetovoArchive/Website/issues"
+  },
+  "homepage": "https://github.com/LetovoArchive/Website#readme",
+  "dependencies": {
+    "letovo-archive-archiver": "^0.1.0"
+  }
+}
