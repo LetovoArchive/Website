@@ -57,7 +57,7 @@ export async function archiveWebsite() {
     for(const newsItem of news.json.data) {
         const lastNews = await storage.getLastNewsByNewsID(newsItem.id);
         if(lastNews && lastNews.json === JSON.stringify(newsItem)) continue;
-        await storage.addNews(newsItem.url, date(), JSON.stringify(newsItem));
+        await storage.addNews(newsItem.id, newsItem.url, date(), JSON.stringify(newsItem));
     }
 
     const vacancies = await archiver.archiveVacancies();
