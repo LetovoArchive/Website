@@ -1,0 +1,30 @@
+@font-face {
+    font-family: NimbusSansNarrow;
+    src: url("/NimbusSansNarrow.ttf");
+}
+
+.title {
+    font-family: NimbusSansNarrow;
+}
+
+.center {
+    text-align: center;
+}
+
+body {
+    margin: 0;
+}
+
+#header, #footer {
+    padding: .5em;
+    text-align: center;
+}
+#header {
+    background: darkslategrey;
+}
+#header a, #header {
+    color: white;
+}
+#footer a, #footer {
+    color: darkslategray;
+}
