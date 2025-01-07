@@ -6,6 +6,7 @@
  * @property {number} date The date of the upload
  * @property {string} by_ip The IP address from which the upload was made
  * @property {string} files The files associated with the upload
+ * @property {string} title The upload title
  */
 
 /**
@@ -81,7 +82,8 @@ db.run(`CREATE TABLE IF NOT EXISTS uploads (
     id INTEGER PRIMARY KEY,
     date INTEGER,
     by_ip TEXT,
-    files TEXT
+    files TEXT,
+    title TEXT
 )`);
 db.run(`CREATE TABLE IF NOT EXISTS website_vacancies (
     id INTEGER PRIMARY KEY,
@@ -221,9 +223,10 @@ export async function getUploadByID(id) {
  * @param {number} date The date of the upload
  * @param {string} by_ip The IP address from which the upload was made
  * @param {string} files The files associated with the upload
+ * @param {string} title The title
  */
-export async function addUpload(date, by_ip, files) {
-    return await adb.run("INSERT INTO uploads (date, by_ip, files) VALUES (?, ?, ?)", [date, by_ip, files]);
+export async function addUpload(date, by_ip, files, title) {
+    return await adb.run("INSERT INTO uploads (date, by_ip, files, title) VALUES (?, ?, ?, ?)", [date, by_ip, files, title]);
 }
 
 /**
