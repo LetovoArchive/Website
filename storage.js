@@ -249,6 +249,16 @@ export async function getLastVacancyByVacancyID(vacancy_id) {
 }
 
 /**
+ * Gets all vacancies by vacancy ID.
+ * 
+ * @param {number} vacancy_id The ID of vacancies
+ * @returns {WebsiteVacancy[]}
+ */
+export async function getAllVacanciesByVacancyID(vacancy_id) {
+    return await adb.all("SELECT * FROM website_vacancies WHERE vacancy_id = ? ORDER BY date DESC", [vacancy_id]);
+}
+
+/**
  * Gets a vacancy by its ID.
  * 
  * @param {number} id The ID of the vacancy
@@ -289,6 +299,16 @@ export async function getLastTextByURL(url) {
 }
 
 /**
+ * Gets all texts by their URL.
+ * 
+ * @param {string} url The URL of the texts
+ * @returns {WebsiteText[]}
+ */
+export async function getAllTextsByURL(url) {
+    return await adb.all("SELECT * FROM website_texts WHERE url = ? ORDER BY date DESC", [url]);
+}
+
+/**
  * Gets a text by its ID.
  * 
  * @param {number} id The ID of the text
@@ -326,6 +346,16 @@ export async function getLast10Docs() {
  */
 export async function getLastDocByURL(url) {
     return await adb.get("SELECT * FROM website_docs WHERE url = ? ORDER BY date DESC LIMIT 1", [url]);
+}
+
+/**
+ * Gets all documents by their URL.
+ * 
+ * @param {string} url The URL of the documents
+ * @returns {WebsiteDoc[]}
+ */
+export async function getAllDocsByURL(url) {
+    return await adb.all("SELECT * FROM website_docs WHERE url = ? ORDER BY date DESC", [url]);
 }
 
 /**
@@ -411,6 +441,16 @@ export async function getLastNewsByNewsID(news_id) {
 }
 
 /**
+ * Gets all news items by their news ID.
+ * 
+ * @param {number} news_id The ID of the news items
+ * @returns {WebsiteNews[]}
+ */
+export async function getAllNewsByNewsID(news_id) {
+    return await adb.all("SELECT * FROM website_news WHERE news_id = ? ORDER BY date DESC", [news_id]);
+}
+
+/**
  * Gets a news item by its ID.
  * 
  * @param {number} id The ID of the news item
@@ -480,6 +520,15 @@ export async function addDDGDoc(url, date, name, file) {
  */
 export async function getLastHHRuDump() {
     return await adb.get("SELECT * FROM hhru ORDER BY date DESC LIMIT 1");
+}
+
+/**
+ * Gets all HH.ru dumps.
+ * 
+ * @returns {HHRu[]} The dumps
+ */
+export async function getAllHHRuDumps() {
+    return await adb.all("SELECT * FROM hhru ORDER BY date DESC");
 }
 
 /**

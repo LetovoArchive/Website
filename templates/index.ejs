@@ -4,6 +4,84 @@
     <body>
         <%- include("header") %>
         <h1 class="title center">Letovo Archive homepage</h1>
+        
+        <h2 class="title center">Recent user uploads</h2>
+        <div class="recent">
+            <% recentUploads.forEach(upload => { %>
+                <div>
+                    <a href="/uploads/<%= upload.id %>">
+                        <%= upload.title %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+        
+        <h2 class="title center">Recent news</h2>
+        <div class="recent">
+            <% recentNews.forEach(news => { %>
+                <div>
+                    <a href="/news/<%= news.id %>">
+                        <%= (JSON.parse(news.json).title) %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+
+        <h2 class="title center">DuckDuckGo docs</h2>
+        <div class="recent">
+            <% recentDDGDocs.forEach(doc => { %>
+                <div>
+                    <a href="/ddg/<%= doc.id %>">
+                        <%= (doc.name) %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+
+        <h2 class="title center">Website docs</h2>
+        <div class="recent">
+            <% recentDocs.forEach(doc => { %>
+                <div>
+                    <a href="/docs/<%= doc.id %>">
+                        <%= (doc.url.split("/").reverse()[0]) %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+
+        <h2 class="title center">Gallery photos</h2>
+        <div class="recent">
+            <% recentPhotos.forEach(photo => { %>
+                <div>
+                    <a href="/gallery/<%= photo.id %>">
+                        <img src="<%= photo.url %>">
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+
+        <h2 class="title center">Recent text page changes</h2>
+        <div class="recent">
+            <% recentTexts.forEach(text => { %>
+                <div>
+                    <a href="/text/<%= text.id %>">
+                        <%= JSON.parse(text.json).page.title %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+
+        <h2 class="title center">Recent vacancies</h2>
+        <div class="recent">
+            <% recentVacancies.forEach(vacancy => { %>
+                <div>
+                    <a href="/vacancy/<%= vacancy.id %>">
+                        <%= JSON.parse(vacancy.vacancy).title %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+
         <%- include("footer") %>
     </body>
 </html>
