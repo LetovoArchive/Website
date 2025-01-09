@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Admin panel | LetovoArchive", description: null }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Admin panel</h1>
+        
+        <form action="/admin/approve" method="post" enctype="multipart/form-data" class="center">
+            <h2>Approve</h2>
+            <input name="username" value="admin" hidden>
+            <input name="password" type="password" placeholder="Password"><br>
+            <input name="id" type="number" placeholder="Upload ID"><br>
+            <br>
+            <input type="submit">
+        </form>
+        
+        <form action="/admin/reject" method="post" enctype="multipart/form-data" class="center">
+            <h2>Reject</h2>
+            <input name="username" value="admin" hidden>
+            <input name="password" type="password" placeholder="Password"><br>
+            <input name="id" type="number" placeholder="Upload ID"><br>
+            <br>
+            <input type="submit">
+        </form>
+
+        <%- include("footer") %>
+    </body>
+</html>

@@ -196,6 +196,16 @@ export function readMeta(uuid) {
 export function readData(uuid) {
     return fs.readFileSync(getDataPath(uuid));
 }
+/**
+ * Deletes a file.
+ * 
+ * @param {string} uuid The UUID of the file
+ */
+export function remove(uuid) {
+    fs.unlinkSync(getMetaPath(uuid));
+    fs.unlinkSync(getDataPath(uuid));
+    fs.rmdirSync(join("files", uuid));
+}
 
 // All of the following code has been written by AI. Expect trouble.
 // And please don't bully me - who in their right mind would write all these lines of code manually?

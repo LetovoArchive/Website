@@ -8,6 +8,8 @@ import { Telegraf } from "telegraf";
 const { EMAIL, TG_TOKEN, TG_ID, PASSWORD } = process.env;
 const bot = new Telegraf(TG_TOKEN);
 
+const rateLimits = {};
+
 const upload = multer({
     storage: multer.memoryStorage(),
     limits: {
@@ -20,6 +22,8 @@ const app = express();
 app.use(express.static(join(import.meta.dirname, "static")));
 
 const PER_PAGE = 20;
+const TIMEOUT = 60000;
+const LIMIT = 1;
 
 app.get("/", async (_req, res) => {
     res.status(200).send(loadEjs({
@@ -64,6 +68,15 @@ app.get("/new", (_req, res) => {
 app.post("/new", upload.array("files"), async (req, res) => {
     if(!req.body.title || req.body.title.length > 200)
         return res.status(400).send("bad request");
+
+    const ip = req.headers["cf-connecting-ip"] ?? req.ip;
+    if(ip in rateLimits && rateLimits[ip] >= LIMIT)
+        return res.status(429).send("too many requests");
+    if(!(ip in rateLimits)) {
+        rateLimits[ip] = 1;
+    } else rateLimits[ip]++;
+    setTimeout(() => rateLimits[ip]--, TIMEOUT)
+
     let uuids = [];
     await bot.telegram.sendMessage(parseInt(TG_ID), req.body.title);
     for(const file of req.files) {
@@ -73,11 +86,27 @@ app.post("/new", upload.array("files"), async (req, res) => {
             filename: file.originalname
         });
     }
-
-    const ip = req.headers["cf-connecting-ip"] ?? req.ip;
     const row = await api.addUpload(new Date().getTime(), ip, uuids.join(";"), req.body.title);
     await bot.telegram.sendMessage(parseInt(TG_ID), "Accept ID: " + row.id);
     res.redirect("/uploads");
+});
+
+app.get("/admin", (_req, res) => {
+    res.status(200).send(loadEjs({}, "admin.ejs"));
+});
+app.post("/admin/approve", upload.none(), async (req, res) => {
+    if(req.body.password != PASSWORD) return res.status(401).send("wrong password");
+    await api.acceptUpload(parseInt(req.body.id));
+    res.status(200).end("Accepted!");
+});
+app.post("/admin/reject", upload.none(), async (req, res) => {
+    if(req.body.password != PASSWORD) return res.status(401).send("wrong password");
+    const upload = await api.getUploadByID(parseInt(req.body.id));
+    if(!upload) return res.status(404).send("not found");
+    for(const file of upload.files.split(";"))
+        api.remove(file);
+    await api.removeUpload(upload.id);
+    res.status(200).end("Rejected!");
 });
 
 app.listen(9890);
