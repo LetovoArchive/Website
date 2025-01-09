@@ -52,3 +52,9 @@ body {
 .recent > div img {
     width: 100%;
 }
+
+textarea {
+    width: 40em;
+    height: 30em;
+    font-family: monospace;
+}

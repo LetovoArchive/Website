@@ -130,6 +130,12 @@ app.get("/gallery/:id", async (req, res) => {
     res.status(200).send(loadEjs({ photo }, "viewphoto.ejs"))
 });
 
+app.get("/news/:id", async (req, res) => {
+    const news = await api.getNewsByID(req.params.id);
+    if(!news) return res.status(404).send("not found");
+    res.status(200).send(loadEjs({ news }, "viewnews.ejs"))
+});
+
 app.get("/new", (_req, res) => {
     res.status(200).send(loadEjs({}, "new.ejs"));
 })

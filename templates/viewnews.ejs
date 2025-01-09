@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<% const json = JSON.parse(news.json); %>
+<html>
+    <%- include("head", { title: json.title + " | LetovoArchive", description: "News on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">News: <%= json.title %></h1>
+        
+        <div class="center">
+            <%- include("jsonviewer", { json }) %>
+        </div>
+
+        <%- include("footer") %>
+    </body>
+</html>
