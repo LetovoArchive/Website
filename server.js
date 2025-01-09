@@ -2,6 +2,19 @@ import express from "express";
 import { loadEjs } from "./loadejs.js";
 import { join } from "path";
 import * as api from "./index.js";
+import multer from "multer";
+import { Telegraf } from "telegraf";
+
+const { EMAIL, TG_TOKEN, TG_ID, PASSWORD } = process.env;
+const bot = new Telegraf(TG_TOKEN);
+
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fieldSize: 10 * 1024 * 1024,
+        files: 20
+    }
+});
 
 const app = express();
 app.use(express.static(join(import.meta.dirname, "static")));
@@ -44,5 +57,27 @@ app.get("/ddg", async (req, res) => paginate(req, res, await api.getAllDDGDocs()
 app.get("/gallery", async (req, res) => paginate(req, res, await api.getAllPhotos(), "photos", "gallery.ejs"));
 app.get("/news", async (req, res) => paginate(req, res, await api.getAllNews(), "news", "news.ejs"));
 app.get("/hhru", async (req, res) => paginate(req, res, await api.getAllHHRuDumps(), "dumps", "hhru.ejs"));
+
+app.get("/new", (_req, res) => {
+    res.status(200).send(loadEjs({}, "new.ejs"));
+})
+app.post("/new", upload.array("files"), async (req, res) => {
+    if(!req.body.title || req.body.title.length > 200)
+        return res.status(400).send("bad request");
+    let uuids = [];
+    await bot.telegram.sendMessage(parseInt(TG_ID), req.body.title);
+    for(const file of req.files) {
+        uuids.push(await api.write(file.originalname, file.buffer));
+        await bot.telegram.sendDocument(parseInt(TG_ID), {
+            source: file.buffer,
+            filename: file.originalname
+        });
+    }
+
+    const ip = req.headers["cf-connecting-ip"] ?? req.ip;
+    const row = await api.addUpload(new Date().getTime(), ip, uuids.join(";"), req.body.title);
+    await bot.telegram.sendMessage(parseInt(TG_ID), "Accept ID: " + row.id);
+    res.redirect("/uploads");
+});
 
 app.listen(9890);

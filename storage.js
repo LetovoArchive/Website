@@ -7,6 +7,7 @@
  * @property {string} by_ip The IP address from which the upload was made
  * @property {string} files The files associated with the upload
  * @property {string} title The upload title
+ * @property {number} accepted Whether the upload was accepted; 0 for not, 1 for yes
  */
 
 /**
@@ -83,7 +84,8 @@ db.run(`CREATE TABLE IF NOT EXISTS uploads (
     date INTEGER,
     by_ip TEXT,
     files TEXT,
-    title TEXT
+    title TEXT,
+    accepted INTEGER
 )`);
 db.run(`CREATE TABLE IF NOT EXISTS website_vacancies (
     id INTEGER PRIMARY KEY,
@@ -213,7 +215,16 @@ export async function getLast10Uploads() {
  * @returns {Upload[]}
  */
 export async function getAllUploads() {
-    return await adb.all("SELECT * FROM uploads ORDER BY date DESC");
+    return await adb.all("SELECT * FROM uploads WHERE accepted = 1 ORDER BY date DESC");
+}
+
+/**
+ * Gets to-be-accepted uploads.
+ * 
+ * @returns {Upload[]}
+ */
+export async function getReviewableUploads() {
+    return await adb.all("SELECT * FROM uploads WHERE accepted = 0 ORDER BY date DESC");
 }
 
 /**
@@ -233,9 +244,29 @@ export async function getUploadByID(id) {
  * @param {string} by_ip The IP address from which the upload was made
  * @param {string} files The files associated with the upload
  * @param {string} title The title
+ * @returns {Upload} The upload
  */
 export async function addUpload(date, by_ip, files, title) {
-    return await adb.run("INSERT INTO uploads (date, by_ip, files, title) VALUES (?, ?, ?, ?)", [date, by_ip, files, title]);
+    return await adb.get("INSERT INTO uploads (date, by_ip, files, title, accepted) VALUES (?, ?, ?, ?, 0) RETURNING *", [date, by_ip, files, title]);
+}
+
+/**
+ * Accepts an upload by its ID.
+ * 
+ * @param {number} id The ID
+ */
+export async function acceptUpload(id) {
+    return await adb.run("UPDATE uploads SET accepted = 1 WHERE id = ?", [id]);
+}
+
+/**
+ * Removes an upload by its ID.
+ * REMEMBER: FILES ARE NOT DELETED!!
+ * 
+ * @param {number} id The ID
+ */
+export async function removeUpload(id) {
+    return await adb.run("DELETE FROM uploads WHERE id = ?", [id]);
 }
 
 /**

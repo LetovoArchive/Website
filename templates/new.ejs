@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Upload new | LetovoArchive", description: "Upload new content on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Upload new</h1>
+        
+        <form action="/new" method="post" enctype="multipart/form-data" class="center">
+            <label for="files">Files</label><br>
+            <input type="file" multiple id="files" name="files"><br>
+            <label for="name">Name</label><br>
+            <input type="text" name="title" id="name"><br>
+            <br>
+            <input type="submit">
+        </form>
+
+        <%- include("footer") %>
+    </body>
+</html>
