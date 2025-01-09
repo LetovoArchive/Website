@@ -8,6 +8,10 @@ import { fileTypeFromBuffer } from "file-type";
 import archiver from "archiver";
 import fs from "fs";
 import * as Diff from "diff";
+import cron from "node-cron";
+
+process.on("uncaughtException", e => console.error(e));
+process.on("unhandledRejection", e => console.error(e));
 
 const { EMAIL, TG_TOKEN, TG_ID, PASSWORD } = process.env;
 const bot = new Telegraf(TG_TOKEN);
@@ -295,3 +299,9 @@ app.post("/admin/reject", upload.none(), async (req, res) => {
 });
 
 app.listen(9890);
+
+cron.schedule("0 0 * * *", async () => {
+    console.log("Started archiving...");
+    await api.archiveAll(EMAIL);
+    console.log("Archived everything!!");
+});
