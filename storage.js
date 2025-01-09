@@ -185,7 +185,7 @@ export function getDataPath(uuid) {
  * @returns {FileMeta} Metadata
  */
 export function readMeta(uuid) {
-    return JSON.parse(fs.readFileSync(getMetaPath(uuid)));
+    return JSON.parse(fs.readFileSync(getMetaPath(uuid), "utf-8"));
 }
 /**
  * Gets file data by its UUID.
