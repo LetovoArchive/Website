@@ -7,6 +7,7 @@
         <h1 class="title center">News: <%= json.title %></h1>
         
         <div class="center">
+            Date: <%= new Date(parseInt(news.date)).toUTCString() %><br>
             <a href="/news/<%= news.id %>/diff">Create diff with the same ID</a><br>
             <a href="/news/<%= news.id %>/diff?all">Create diff with another ID</a><br>
             <%- include("jsonviewer", { json }) %>
