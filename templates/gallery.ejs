@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Gallery | LetovoArchive", description: "Photos on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Gallery</h1>
+        <h3 class="title center">Note: we do not store the photos, just the URLs and metadata!</h3>
+        
+        <h2 class="title center">Page <%= page %></h2>
+        <div class="recent">
+            <% photos.forEach(photo => { %>
+                <div>
+                    <a href="/gallery/<%= photo.id %>">
+                        <img src="<%= photo.url %>">
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+        <%- include("pagination", { page, lastPage }) %>
+
+        <%- include("footer") %>
+    </body>
+</html>

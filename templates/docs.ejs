@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Documents | LetovoArchive", description: "Documents on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Documents</h1>
+        
+        <h2 class="title center">Page <%= page %></h2>
+        <div class="recent">
+            <% docs.forEach(doc => { %>
+                <div>
+                    <a href="/docs/<%= doc.id %>">
+                        <%= (doc.url.split("/").reverse()[0]) %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+        <%- include("pagination", { page, lastPage }) %>
+
+        <%- include("footer") %>
+    </body>
+</html>

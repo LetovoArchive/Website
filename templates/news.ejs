@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "News | LetovoArchive", description: "News on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">News</h1>
+        
+        <h2 class="title center">Page <%= page %></h2>
+        <div class="recent">
+            <% news.forEach(news => { %>
+                <div>
+                    <a href="/news/<%= news.id %>">
+                        <%= (JSON.parse(news.json).title) %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+        <%- include("pagination", { page, lastPage }) %>
+
+        <%- include("footer") %>
+    </body>
+</html>

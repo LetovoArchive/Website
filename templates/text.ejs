@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Text pages | LetovoArchive", description: "Text pages from Letovo websites on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Text pages</h1>
+        
+        <h2 class="title center">Page <%= page %></h2>
+        <div class="recent">
+            <% texts.forEach(text => { %>
+                <div>
+                    <a href="/text/<%= text.id %>">
+                        <%= JSON.parse(text.json).page.title %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+        <%- include("pagination", { page, lastPage }) %>
+
+        <%- include("footer") %>
+    </body>
+</html>

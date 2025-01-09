@@ -1,0 +1,4 @@
+<h3 class="title center">
+    <% if(page != 1) { %> <a href="?page=<%= page - 1 %>">Previous</a> <% } %>
+    <% if(page != lastPage) { %> <a href="?page=<%= page + 1 %>">Next</a> <% } %>
+</h3>

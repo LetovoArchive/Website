@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Uploads | LetovoArchive", description: "User-uploaded content on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">User-uploaded content</h1>
+        
+        <h2 class="title center">Page <%= page %></h2>
+        <div class="recent">
+            <% uploads.forEach(upload => { %>
+                <div>
+                    <a href="/uploads/<%= upload.id %>">
+                        <%= upload.title %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+        <%- include("pagination", { page, lastPage }) %>
+
+        <%- include("footer") %>
+    </body>
+</html>

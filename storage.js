@@ -208,6 +208,15 @@ export async function getLast10Uploads() {
 }
 
 /**
+ * Gets all uploads.
+ * 
+ * @returns {Upload[]}
+ */
+export async function getAllUploads() {
+    return await adb.all("SELECT * FROM uploads ORDER BY date DESC");
+}
+
+/**
  * Gets an upload by its ID.
  * 
  * @param {number} id The ID of the upload
@@ -256,6 +265,15 @@ export async function getLastVacancyByVacancyID(vacancy_id) {
  */
 export async function getAllVacanciesByVacancyID(vacancy_id) {
     return await adb.all("SELECT * FROM website_vacancies WHERE vacancy_id = ? ORDER BY date DESC", [vacancy_id]);
+}
+
+/**
+ * Gets all vacancies.
+ * 
+ * @returns {WebsiteVacancy[]}
+ */
+export async function getAllVacancies() {
+    return await adb.all("SELECT * FROM website_vacancies ORDER BY date DESC");
 }
 
 /**
@@ -309,6 +327,15 @@ export async function getAllTextsByURL(url) {
 }
 
 /**
+ * Gets all texts.
+ * 
+ * @returns {WebsiteText[]}
+ */
+export async function getAllTexts() {
+    return await adb.all("SELECT * FROM website_texts ORDER BY date DESC");
+}
+
+/**
  * Gets a text by its ID.
  * 
  * @param {number} id The ID of the text
@@ -359,6 +386,15 @@ export async function getAllDocsByURL(url) {
 }
 
 /**
+ * Gets all documents.
+ * 
+ * @returns {WebsiteDoc[]}
+ */
+export async function getAllDocs() {
+    return await adb.all("SELECT * FROM website_docs ORDER BY date DESC");
+}
+
+/**
  * Gets a document by its ID.
  * 
  * @param {number} id The ID of the document
@@ -386,6 +422,15 @@ export async function addDoc(url, date, file) {
  */
 export async function getLast10Photos() {
     return await adb.all("SELECT * FROM website_gallery ORDER BY date DESC LIMIT 10");
+}
+
+/**
+ * Gets all photos.
+ * 
+ * @returns {WebsiteGallery[]}
+ */
+export async function getAllPhotos() {
+    return await adb.all("SELECT * FROM website_gallery ORDER BY date DESC");
 }
 
 /**
@@ -451,6 +496,15 @@ export async function getAllNewsByNewsID(news_id) {
 }
 
 /**
+ * Gets all news items.
+ * 
+ * @returns {WebsiteNews[]}
+ */
+export async function getAllNews() {
+    return await adb.all("SELECT * FROM website_news ORDER BY date DESC");
+}
+
+/**
  * Gets a news item by its ID.
  * 
  * @param {number} id The ID of the news item
@@ -479,6 +533,15 @@ export async function addNews(news_id, url, date, json) {
  */
 export async function getLast10DDGDocs() {
     return await adb.all("SELECT * FROM ddg_docs ORDER BY date DESC LIMIT 10");
+}
+
+/**
+ * Gets all DDG documents.
+ * 
+ * @returns {DDGDoc[]}
+ */
+export async function getAllDDGDocs() {
+    return await adb.all("SELECT * FROM ddg_docs ORDER BY date DESC");
 }
 
 /**

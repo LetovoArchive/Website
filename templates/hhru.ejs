@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "HH.ru dumps | LetovoArchive", description: "HH.ru dumps on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">HH.ru dumps</h1>
+        
+        <h2 class="title center">Page <%= page %></h2>
+        <div class="recent">
+            <% dumps.forEach(dump => { %>
+                <div>
+                    <a href="/hhru/<%= dump.id %>">
+                        <%= new Date(parseInt(dump.date)).toUTCString() %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+        <%- include("pagination", { page, lastPage }) %>
+
+        <%- include("footer") %>
+    </body>
+</html>
