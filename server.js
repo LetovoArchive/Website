@@ -169,6 +169,30 @@ app.get("/news/:left/diff/:right", async (req, res) => {
     );
 })
 
+app.get("/hhru/:id", async (req, res) => {
+    const dump = await api.getHHRuDumpByID(req.params.id);
+    if(!dump) return res.status(404).send("not found");
+    res.status(200).send(loadEjs({ dump }, "viewhhru.ejs"))
+});
+
+app.get("/hhru/:id/diff", async (req, res) => {
+    const dump = await api.getHHRuDumpByID(req.params.id);
+    if(!dump) return res.status(404).send("not found");
+
+    diffwith(await api.getAllHHRuDumps(), parseInt(req.params.id), res, "hhru");
+});
+app.get("/hhru/:left/diff/:right", async (req, res) => {
+    const left = await api.getHHRuDumpByID(req.params.left);
+    if(!left) return res.status(404).send("not found");
+    const right = await api.getHHRuDumpByID(req.params.right);
+    if(!right) return res.status(404).send("not found");
+    diff(
+        JSON.stringify(JSON.parse(left.json), null, 4),
+        JSON.stringify(JSON.parse(right.json), null, 4),
+        res
+    );
+})
+
 app.get("/new", (_req, res) => {
     res.status(200).send(loadEjs({}, "new.ejs"));
 })

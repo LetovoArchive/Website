@@ -627,6 +627,16 @@ export async function getLastHHRuDump() {
 }
 
 /**
+ * Gets a HH.ru dump by its ID.
+ * 
+ * @param {number} id The ID
+ * @returns {HHRu} The dump
+ */
+export async function getHHRuDumpByID(id) {
+    return await adb.get("SELECT * FROM hhru WHERE id = ?", [id]);
+}
+
+/**
  * Gets all HH.ru dumps.
  * 
  * @returns {HHRu[]} The dumps
