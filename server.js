@@ -193,6 +193,33 @@ app.get("/hhru/:left/diff/:right", async (req, res) => {
     );
 })
 
+app.get("/vacancy/:id", async (req, res) => {
+    const vacancy = await api.getVacancyByID(req.params.id);
+    if(!vacancy) return res.status(404).send("not found");
+    res.status(200).send(loadEjs({ vacancy }, "viewvacancy.ejs"))
+});
+
+app.get("/vacancy/:id/diff", async (req, res) => {
+    const vacancy = await api.getVacancyByID(req.params.id);
+    if(!vacancy) return res.status(404).send("not found");
+
+    if("all" in req.query)
+        diffwith(await api.getAllVacancies(), parseInt(req.params.id), res, "vacancy");
+    else
+        diffwith(await api.getAllVacanciesByVacancyID(vacancy.vacancy_id), parseInt(req.params.id), res, "vacancy");
+});
+app.get("/vacancy/:left/diff/:right", async (req, res) => {
+    const left = await api.getVacancyByID(req.params.left);
+    if(!left) return res.status(404).send("not found");
+    const right = await api.getVacancyByID(req.params.right);
+    if(!right) return res.status(404).send("not found");
+    diff(
+        JSON.stringify(JSON.parse(left.vacancy), null, 4),
+        JSON.stringify(JSON.parse(right.vacancy), null, 4),
+        res
+    );
+})
+
 app.get("/new", (_req, res) => {
     res.status(200).send(loadEjs({}, "new.ejs"));
 })

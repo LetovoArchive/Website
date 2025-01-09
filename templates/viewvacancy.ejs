@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<% const json = JSON.parse(vacancy.vacancy); %>
+<html>
+    <%- include("head", { title: json.title + " | LetovoArchive", description: "Vacancy on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Vacancy: <%= json.title %></h1>
+        
+        <div class="center">
+            Date: <%= new Date(parseInt(vacancy.date)).toUTCString() %><br>
+            <a href="/vacancy/<%= vacancy.id %>/diff">Create diff with the same ID</a><br>
+            <a href="/vacancy/<%= vacancy.id %>/diff?all">Create diff with another ID</a><br>
+            <%- include("jsonviewer", { json }) %>
+        </div>
+
+        <%- include("footer") %>
+    </body>
+</html>
