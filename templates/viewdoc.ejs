@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<% const name = doc.url.split("/").reverse()[0]; %>
+<html>
+    <%- include("head", { title: name + " | LetovoArchive", description: "Documents on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Document: <%= name %></h1>
+        
+        <div class="center">
+            URL: <%= doc.url %><br>
+            Date: <%= new Date(parseInt(doc.date)).toUTCString() %><br>
+            <a href="/docs/<%= doc.id %>/download">Download</a>
+        </div>
+
+        <%- include("footer") %>
+    </body>
+</html>

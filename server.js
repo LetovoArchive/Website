@@ -4,6 +4,7 @@ import { join } from "path";
 import * as api from "./index.js";
 import multer from "multer";
 import { Telegraf } from "telegraf";
+import { fileTypeFromBuffer } from "file-type";
 
 const { EMAIL, TG_TOKEN, TG_ID, PASSWORD } = process.env;
 const bot = new Telegraf(TG_TOKEN);
@@ -61,6 +62,22 @@ app.get("/ddg", async (req, res) => paginate(req, res, await api.getAllDDGDocs()
 app.get("/gallery", async (req, res) => paginate(req, res, await api.getAllPhotos(), "photos", "gallery.ejs"));
 app.get("/news", async (req, res) => paginate(req, res, await api.getAllNews(), "news", "news.ejs"));
 app.get("/hhru", async (req, res) => paginate(req, res, await api.getAllHHRuDumps(), "dumps", "hhru.ejs"));
+
+app.get("/docs/:id", async (req, res) => {
+    const doc = await api.getDocByID(req.params.id);
+    if(!doc) return res.status(404).send("not found");
+    res.status(200).send(loadEjs({ doc }, "viewdoc.ejs"))
+});
+app.get("/docs/:id/download", async (req, res) => {
+    const doc = await api.getDocByID(req.params.id);
+    if(!doc) return res.status(404).send("not found");
+    const data = await api.readData(doc.file);
+    const meta = await api.readMeta(doc.file);
+    res
+        .contentType((await fileTypeFromBuffer(data)).mime)
+        .setHeader("content-disposition", `attachment; filename="${encodeURIComponent(meta.name)}"`)
+        .send(data);
+});
 
 app.get("/new", (_req, res) => {
     res.status(200).send(loadEjs({}, "new.ejs"));
