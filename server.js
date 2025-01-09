@@ -124,6 +124,12 @@ app.get("/uploads/:id/download", async (req, res) => {
     archive.finalize();
 });
 
+app.get("/gallery/:id", async (req, res) => {
+    const photo = await api.getPhotoByID(req.params.id);
+    if(!photo) return res.status(404).send("not found");
+    res.status(200).send(loadEjs({ photo }, "viewphoto.ejs"))
+});
+
 app.get("/new", (_req, res) => {
     res.status(200).send(loadEjs({}, "new.ejs"));
 })

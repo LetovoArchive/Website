@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Photo " + photo.id + " | LetovoArchive", description: "Photo on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Photo: <%= photo.id %></h1>
+        
+        <div class="center">
+            URL: <%= photo.url %><br>
+            Album ID: <%= photo.album_id %><br>
+            Album name: <%= photo.album_name %><br>
+            Date: <%= new Date(parseInt(photo.date)).toUTCString() %><br>
+            <img src="<%= photo.url %>">
+        </div>
+
+        <%- include("footer") %>
+    </body>
+</html>
