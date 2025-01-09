@@ -277,7 +277,7 @@ app.post("/new", upload.array("files"), async (req, res) => {
     }
     const row = await api.addUpload(new Date().getTime(), ip, uuids.join(";"), req.body.title);
     await bot.telegram.sendMessage(parseInt(TG_ID), "Accept ID: " + row.id);
-    res.redirect("/uploads");
+    res.redirect("/uploads#success");
 });
 
 app.get("/admin", (_req, res) => {
