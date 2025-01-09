@@ -3,6 +3,10 @@
     src: url("/NimbusSansNarrow.ttf");
 }
 
+* {
+    font-family: sans-serif;
+}
+
 .title {
     font-family: NimbusSansNarrow;
 }
