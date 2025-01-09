@@ -7,7 +7,7 @@
         
         <div class="diff">
             <% diff.forEach(part => { %>
-                <span class="<%= part.added ? "added" : part.removed ? "removed" : "normal"%>"><%= part.value %></span><br>
+                <span class="<%= part.added ? "added" : part.removed ? "removed" : "normal"%>"><%= part.value %></span>
             <% }); %>
         </div>
 
