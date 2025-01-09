@@ -220,6 +220,33 @@ app.get("/vacancy/:left/diff/:right", async (req, res) => {
     );
 })
 
+app.get("/text/:id", async (req, res) => {
+    const text = await api.getTextByID(req.params.id);
+    if(!text) return res.status(404).send("not found");
+    res.status(200).send(loadEjs({ text }, "viewtext.ejs"))
+});
+
+app.get("/text/:id/diff", async (req, res) => {
+    const text = await api.getTextByID(req.params.id);
+    if(!text) return res.status(404).send("not found");
+
+    if("all" in req.query)
+        diffwith(await api.getAllTexts(), parseInt(req.params.id), res, "text");
+    else
+        diffwith(await api.getAllTextsByURL(text.url), parseInt(req.params.id), res, "text");
+});
+app.get("/text/:left/diff/:right", async (req, res) => {
+    const left = await api.getTextByID(req.params.left);
+    if(!left) return res.status(404).send("not found");
+    const right = await api.getTextByID(req.params.right);
+    if(!right) return res.status(404).send("not found");
+    diff(
+        JSON.stringify(JSON.parse(left.json), null, 4),
+        JSON.stringify(JSON.parse(right.json), null, 4),
+        res
+    );
+})
+
 app.get("/new", (_req, res) => {
     res.status(200).send(loadEjs({}, "new.ejs"));
 })
