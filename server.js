@@ -63,6 +63,15 @@ app.get("/gallery", async (req, res) => paginate(req, res, await api.getAllPhoto
 app.get("/news", async (req, res) => paginate(req, res, await api.getAllNews(), "news", "news.ejs"));
 app.get("/hhru", async (req, res) => paginate(req, res, await api.getAllHHRuDumps(), "dumps", "hhru.ejs"));
 
+const download = async (res, uuid, forceName = null) => {
+    const data = await api.readData(uuid);
+    const meta = await api.readMeta(uuid);
+    res
+        .contentType((await fileTypeFromBuffer(data)).mime)
+        .setHeader("content-disposition", `attachment; filename="${encodeURIComponent(forceName === null ? meta.name : forceName)}"`)
+        .send(data);
+}
+
 app.get("/docs/:id", async (req, res) => {
     const doc = await api.getDocByID(req.params.id);
     if(!doc) return res.status(404).send("not found");
@@ -71,12 +80,18 @@ app.get("/docs/:id", async (req, res) => {
 app.get("/docs/:id/download", async (req, res) => {
     const doc = await api.getDocByID(req.params.id);
     if(!doc) return res.status(404).send("not found");
-    const data = await api.readData(doc.file);
-    const meta = await api.readMeta(doc.file);
-    res
-        .contentType((await fileTypeFromBuffer(data)).mime)
-        .setHeader("content-disposition", `attachment; filename="${encodeURIComponent(meta.name)}"`)
-        .send(data);
+    await download(res, doc.file);
+});
+
+app.get("/ddg/:id", async (req, res) => {
+    const doc = await api.getDDGDocByID(req.params.id);
+    if(!doc) return res.status(404).send("not found");
+    res.status(200).send(loadEjs({ doc }, "viewddg.ejs"))
+});
+app.get("/ddg/:id/download", async (req, res) => {
+    const doc = await api.getDDGDocByID(req.params.id);
+    if(!doc) return res.status(404).send("not found");
+    await download(res, doc.file, doc.url.split("/").reverse()[0]);
 });
 
 app.get("/new", (_req, res) => {
