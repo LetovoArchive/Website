@@ -58,3 +58,21 @@ textarea {
     height: 30em;
     font-family: monospace;
 }
+
+.diff, .diff-right {
+    display: inline-block;
+    max-width: 60em;
+}
+
+.diff > span {
+    font-family: monospace;
+    white-space: pre;
+    text-wrap: wrap;
+    line-break: anywhere;
+}
+.diff > span.added {
+    color: green;
+}
+.diff > span.removed {
+    color: red;
+}

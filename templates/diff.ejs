@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Diff | LetovoArchive", description: "Diff of two files" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Diff</h1>
+        
+        <div class="diff">
+            <% diff.forEach(part => { %>
+                <span class="<%= part.added ? "added" : part.removed ? "removed" : "normal"%>"><%= part.value %></span><br>
+            <% }); %>
+        </div>
+
+        <%- include("footer") %>
+    </body>
+</html>

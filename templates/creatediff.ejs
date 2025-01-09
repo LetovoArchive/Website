@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Create diff | LetovoArchive", description: "Create a diff of two files" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Create diff</h1>
+        
+        <div class="center">
+            <% array.forEach(item => { %>
+                <a href="/<%= baseURL %>/<%= id %>/diff/<%= item.id %>"><%= "title" in item ? item.title + " " : "name" in item ? item.name + " " : "" %><%= item.id %></a><br>
+            <% }); %>
+        </div>
+
+        <%- include("footer") %>
+    </body>
+</html>

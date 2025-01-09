@@ -7,6 +7,7 @@ import { Telegraf } from "telegraf";
 import { fileTypeFromBuffer } from "file-type";
 import archiver from "archiver";
 import fs from "fs";
+import * as Diff from "diff";
 
 const { EMAIL, TG_TOKEN, TG_ID, PASSWORD } = process.env;
 const bot = new Telegraf(TG_TOKEN);
@@ -130,11 +131,43 @@ app.get("/gallery/:id", async (req, res) => {
     res.status(200).send(loadEjs({ photo }, "viewphoto.ejs"))
 });
 
+const diffwith = (array, id, res, baseURL) => {
+    res.send(loadEjs({
+        array, id, baseURL
+    }, "creatediff.ejs"));
+};
+const diff = (text1, text2, res) => {
+    res.send(loadEjs({
+        diff: Diff.diffLines(text1, text2)
+    }, "diff.ejs"));
+}
+
 app.get("/news/:id", async (req, res) => {
     const news = await api.getNewsByID(req.params.id);
     if(!news) return res.status(404).send("not found");
     res.status(200).send(loadEjs({ news }, "viewnews.ejs"))
 });
+
+app.get("/news/:id/diff", async (req, res) => {
+    const news = await api.getNewsByID(req.params.id);
+    if(!news) return res.status(404).send("not found");
+
+    if("all" in req.query)
+        diffwith(await api.getAllNews(), parseInt(req.params.id), res, "news");
+    else
+        diffwith(await api.getAllNewsByNewsID(news.news_id), parseInt(req.params.id), res, "news");
+});
+app.get("/news/:left/diff/:right", async (req, res) => {
+    const left = await api.getNewsByID(req.params.left);
+    if(!left) return res.status(404).send("not found");
+    const right = await api.getNewsByID(req.params.right);
+    if(!right) return res.status(404).send("not found");
+    diff(
+        JSON.stringify(JSON.parse(left.json), null, 4),
+        JSON.stringify(JSON.parse(right.json), null, 4),
+        res
+    );
+})
 
 app.get("/new", (_req, res) => {
     res.status(200).send(loadEjs({}, "new.ejs"));

@@ -24,6 +24,7 @@
   "homepage": "https://github.com/LetovoArchive/Website#readme",
   "dependencies": {
     "archiver": "^7.0.1",
+    "diff": "^7.0.0",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "file-type": "^19.6.0",
