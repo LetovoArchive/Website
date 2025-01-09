@@ -5,6 +5,8 @@ import * as api from "./index.js";
 import multer from "multer";
 import { Telegraf } from "telegraf";
 import { fileTypeFromBuffer } from "file-type";
+import archiver from "archiver";
+import fs from "fs";
 
 const { EMAIL, TG_TOKEN, TG_ID, PASSWORD } = process.env;
 const bot = new Telegraf(TG_TOKEN);
@@ -64,13 +66,22 @@ app.get("/news", async (req, res) => paginate(req, res, await api.getAllNews(), 
 app.get("/hhru", async (req, res) => paginate(req, res, await api.getAllHHRuDumps(), "dumps", "hhru.ejs"));
 
 const download = async (res, uuid, forceName = null) => {
-    const data = await api.readData(uuid);
-    const meta = await api.readMeta(uuid);
-    res
-        .contentType((await fileTypeFromBuffer(data)).mime)
-        .setHeader("content-disposition", `attachment; filename="${encodeURIComponent(forceName === null ? meta.name : forceName)}"`)
-        .send(data);
+    try {
+        const data = await api.readData(uuid);
+        const meta = await api.readMeta(uuid);
+        res
+            .contentType((await fileTypeFromBuffer(data))?.mime ?? "text/plain")
+            .setHeader("content-disposition", `attachment; filename="${encodeURIComponent(forceName === null ? meta.name : forceName)}"`)
+            .send(data);
+    } catch(e) {
+        console.error(e);
+        res.status(500).send("server error");
+    }
 }
+
+app.get("/dl/:uuid", async (req, res) => {
+    await download(res, req.params.uuid);
+});
 
 app.get("/docs/:id", async (req, res) => {
     const doc = await api.getDocByID(req.params.id);
@@ -92,6 +103,25 @@ app.get("/ddg/:id/download", async (req, res) => {
     const doc = await api.getDDGDocByID(req.params.id);
     if(!doc) return res.status(404).send("not found");
     await download(res, doc.file, doc.url.split("/").reverse()[0]);
+});
+
+app.get("/uploads/:id", async (req, res) => {
+    const upload = await api.getUploadByID(req.params.id);
+    if(!upload) return res.status(404).send("not found");
+    const files = {};
+    for(const file of upload.files.split(";")) {
+        files[api.readMeta(file).name] = file;
+    }
+    res.status(200).send(loadEjs({ upload, files }, "viewupload.ejs"))
+});
+app.get("/uploads/:id/download", async (req, res) => {
+    const upload = await api.getUploadByID(req.params.id);
+    if(!upload) return res.status(404).send("not found");
+    const archive = archiver("zip", { zlib: { level: 9 } });
+    archive.pipe(res);
+    for(const file of upload.files.split(";"))
+        archive.append(fs.createReadStream(api.getDataPath(file)), { name: api.readMeta(file).name });
+    archive.finalize();
 });
 
 app.get("/new", (_req, res) => {
