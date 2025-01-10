@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<% const name = webArchive.url.replace(/\/$/, "").split("/").reverse()[0]; %>
+<html>
+    <%- include("head", { title: name + " | LetovoArchive", description: "Archived web page on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Web page: <%= name %></h1>
+        
+        <div class="center">
+            URL: <%= webArchive.url %><br>
+            Date: <%= new Date(parseInt(webArchive.date)).toUTCString() %><br>
+            <a href="/web/<%= webArchive.id %>/download">Download</a>
+        </div>
+
+        <%- include("footer") %>
+    </body>
+</html>

@@ -82,6 +82,17 @@
             <% }); %>
         </div>
 
+        <h2 class="title center">Recent web dumps</h2>
+        <div class="recent">
+            <% recentWebArchives.forEach(web => { %>
+                <div>
+                    <a href="/web/<%= web.id %>">
+                        <%= web.url %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+
         <%- include("footer") %>
     </body>
 </html>

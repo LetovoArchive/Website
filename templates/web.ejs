@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Web archives | LetovoArchive", description: "Web archives on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Web archives</h1>
+        <h3 class="title center"><a href="/newweb">Archive new</a></h3>
+        
+        <div class="msg center" id="success">Success! The web page should now be visible to everyone.</div>
+
+        <h2 class="title center">Page <%= page %></h2>
+        <div class="recent">
+            <% webArchives.forEach(web => { %>
+                <div>
+                    <a href="/web/<%= web.id %>">
+                        <%= web.url %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+        <%- include("pagination", { page, lastPage }) %>
+
+        <%- include("footer") %>
+    </body>
+</html>

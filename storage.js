@@ -69,6 +69,14 @@
  * @property {string} json The JSON dump
  */
 
+/**
+ * @typedef {object} WebArchive
+ * @property {number} id ID of the archived page
+ * @property {number} date The date of archival
+ * @property {string} file The associated file
+ * @property {string} url The URL of the archive
+ */
+
 
 
 import sqlite3 from "sqlite3";
@@ -131,6 +139,12 @@ db.run(`CREATE TABLE IF NOT EXISTS hhru (
     id INTEGER PRIMARY KEY,
     date INTEGER,
     json TEXT
+)`);
+db.run(`CREATE TABLE IF NOT EXISTS web (
+    id INTEGER PRIMARY KEY,
+    date INTEGER,
+    file TEXT,
+    url TEXT
 )`);
 
 const adb = (func, query, params) => new Promise((resolve, reject) => {
@@ -653,4 +667,43 @@ export async function getAllHHRuDumps() {
  */
 export async function addHHRuDump(date, json) {
     return await adb.run("INSERT INTO hhru (date, json) VALUES (?, ?)", [date, json]);
+}
+
+/**
+ * Gets the last 10 archived pages.
+ * 
+ * @returns {WebArchive[]}
+ */
+export async function getLast10WebArchives() {
+    return await adb.all("SELECT * FROM web ORDER BY date DESC LIMIT 10");
+}
+
+/**
+ * Gets all archived pages.
+ * 
+ * @returns {WebArchive[]}
+ */
+export async function getAllWebArchives() {
+    return await adb.all("SELECT * FROM web ORDER BY date DESC");
+}
+
+/**
+ * Gets an archived page by its ID.
+ * 
+ * @param {number} id The ID of the archived page
+ * @returns {WebArchive}
+ */
+export async function getWebArchiveByID(id) {
+    return await adb.get("SELECT * FROM web WHERE id = ?", [id]);
+}
+
+/**
+ * Adds an archived page to the database.
+ * 
+ * @param {number} date The date of the archival
+ * @param {string} file The associated file
+ * @param {string} url The URL
+ */
+export async function addWebArchive(date, file, url) {
+    return await adb.run("INSERT INTO web (date, file, url) VALUES (?, ?, ?)", [date, file, url]);
 }

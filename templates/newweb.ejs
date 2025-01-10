@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Archive new page | LetovoArchive", description: "Archive new page on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Archive new page</h1>
+        
+        <p class="center">Note: please wait for the page to load and don't spam the button!</p>
+        
+        <form action="/newweb" method="post" enctype="multipart/form-data" class="center">
+            <label for="url">URL</label><br>
+            <input type="url" name="url" id="url"><br>
+            <br>
+            <input type="submit">
+        </form>
+
+        <%- include("footer") %>
+    </body>
+</html>

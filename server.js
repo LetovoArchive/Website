@@ -13,6 +13,18 @@ import cron from "node-cron";
 process.on("uncaughtException", e => console.error(e));
 process.on("unhandledRejection", e => console.error(e));
 
+const webArchiver = new api.WebArchiver(["letovo.ru", "letovo.site"]);
+let ready = false;
+(async () => {
+    await webArchiver.init();
+    ready = true;
+})();
+
+process.on("SIGINT", async () => {
+    await webArchiver.deinit();
+    process.exit(0);
+});
+
 const { EMAIL, TG_TOKEN, TG_ID, PASSWORD } = process.env;
 const bot = new Telegraf(TG_TOKEN);
 
@@ -41,7 +53,8 @@ app.get("/", async (_req, res) => {
         recentPhotos: await api.getLast10Photos(),
         recentNews: await api.getLast10News(),
         recentTexts: await api.getLast10Texts(),
-        recentVacancies: await api.getLast10Vacancies()
+        recentVacancies: await api.getLast10Vacancies(),
+        recentWebArchives: await api.getLast10WebArchives()
     }, "index.ejs"));
 });
 
@@ -69,6 +82,7 @@ app.get("/ddg", async (req, res) => paginate(req, res, await api.getAllDDGDocs()
 app.get("/gallery", async (req, res) => paginate(req, res, await api.getAllPhotos(), "photos", "gallery.ejs"));
 app.get("/news", async (req, res) => paginate(req, res, await api.getAllNews(), "news", "news.ejs"));
 app.get("/hhru", async (req, res) => paginate(req, res, await api.getAllHHRuDumps(), "dumps", "hhru.ejs"));
+app.get("/web", async (req, res) => paginate(req, res, await api.getAllWebArchives(), "webArchives", "web.ejs"));
 
 const download = async (res, uuid, forceName = null) => {
     try {
@@ -127,6 +141,17 @@ app.get("/uploads/:id/download", async (req, res) => {
     for(const file of upload.files.split(";"))
         archive.append(fs.createReadStream(api.getDataPath(file)), { name: api.readMeta(file).name });
     archive.finalize();
+});
+
+app.get("/web/:id", async (req, res) => {
+    const webArchive = await api.getWebArchiveByID(req.params.id);
+    if(!webArchive) return res.status(404).send("not found");
+    res.status(200).send(loadEjs({ webArchive }, "viewweb.ejs"))
+});
+app.get("/web/:id/download", async (req, res) => {
+    const webArchive = await api.getWebArchiveByID(req.params.id);
+    if(!webArchive) return res.status(404).send("not found");
+    await download(res, webArchive.file);
 });
 
 app.get("/gallery/:id", async (req, res) => {
@@ -278,6 +303,32 @@ app.post("/new", upload.array("files"), async (req, res) => {
     const row = await api.addUpload(new Date().getTime(), ip, uuids.join(";"), req.body.title);
     await bot.telegram.sendMessage(parseInt(TG_ID), "Accept ID: " + row.id);
     res.redirect("/uploads#success");
+});
+
+app.get("/newweb", (_req, res) => {
+    res.status(200).send(loadEjs({}, "newweb.ejs"));
+})
+app.post("/newweb", upload.none(), async (req, res) => {
+    if(!ready) return res.status(429).send("not ready yet!");
+
+    if(!req.body.url)
+        return res.status(400).send("bad request");
+
+    const ip = req.headers["cf-connecting-ip"] ?? req.ip;
+    if(ip in rateLimits && rateLimits[ip] >= LIMIT)
+        return res.status(429).send("too many requests");
+    if(!(ip in rateLimits)) {
+        rateLimits[ip] = 1;
+    } else rateLimits[ip]++;
+    setTimeout(() => rateLimits[ip]--, TIMEOUT)
+
+    const archive = await webArchiver.archiveToMHTML(req.body.url);
+    if(archive === null)
+        return res.status(400).send("bad request. should only be *.letovo.ru, *.letovo.site or letovo.ru");
+    const uuid = api.write((req.body.url.split("/").reverse()[0] || "index") + ".mhtml", archive);
+    await api.addWebArchive(new Date().getTime(), uuid, req.body.url);
+
+    res.redirect("/web#success");
 });
 
 app.get("/admin", (_req, res) => {
