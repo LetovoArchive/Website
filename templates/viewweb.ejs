@@ -9,7 +9,8 @@
         <div class="center">
             URL: <%= webArchive.url %><br>
             Date: <%= new Date(parseInt(webArchive.date)).toUTCString() %><br>
-            <a href="/web/<%= webArchive.id %>/download">Download</a>
+            <a href="/web/<%= webArchive.id %>/download">Download</a><br>
+            <small>Please note: not all browsers support MHTML. We recommend using the latest Chrome or Edge.<br>Firefox does NOT support MHTML.</small>
         </div>
 
         <%- include("footer") %>
