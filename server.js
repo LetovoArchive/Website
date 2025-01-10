@@ -349,6 +349,55 @@ app.post("/admin/reject", upload.none(), async (req, res) => {
     res.status(200).end("Rejected!");
 });
 
+const SEARCH_TYPES = [
+    "uploads", "news",
+    "ddg", "docs",
+    "gallery", "text",
+    "vacancy", "web"
+];
+
+app.get("/search", (_req, res) => res.send(loadEjs({
+    types: SEARCH_TYPES,
+    type: "none",
+    results: []
+}, "search.ejs")));
+
+app.post("/search", upload.none(), async (req, res) => {
+    if(!req.body.kw || !req.body.type) return res.status(400).send("bad request");
+    
+    req.body.kw = req.body.kw.toLowerCase();
+
+    let results = [];
+    if(req.body.type === "uploads")
+        results = await api.searchUploadsByTitle(req.body.kw);
+    else if(req.body.type === "news")
+        results = (await api.searchNewsByJSON(req.body.kw))
+            .concat(await api.searchNewsByURL(encodeURIComponent(req.body.kw)));
+    else if(req.body.type === "ddg")
+        results = (await api.searchDDGDocsByName(req.body.kw))
+            .concat(await api.searchDDGDocsByURL(encodeURIComponent(req.body.kw)));
+    else if(req.body.type === "docs")
+        results = await api.searchDocsByURL(encodeURIComponent(req.body.kw));
+    else if(req.body.type === "gallery")
+        results = (await api.searchGalleryByAlbumName(req.body.kw))
+            .concat(await api.searchGalleryByURL(encodeURIComponent(req.body.kw)));
+    else if(req.body.type === "text")
+        results = (await api.searchTextsByJSON(req.body.kw))
+            .concat(await api.searchTextsByURL(encodeURIComponent(req.body.kw)));
+    else if(req.body.type === "vacancy")
+        results = await api.searchVacanciesByDetails(req.body.kw);
+    else if(req.body.type === "web")
+        results = await api.searchWebArchivesByURL(encodeURIComponent(req.body.kw));
+    else
+        return res.redirect("/search");
+
+    res.send(loadEjs({
+        types: SEARCH_TYPES,
+        type: req.body.type,
+        results
+    }, "search.ejs"));
+});
+
 app.listen(9890);
 
 cron.schedule("0 0 * * *", async () => {

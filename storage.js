@@ -707,3 +707,133 @@ export async function getWebArchiveByID(id) {
 export async function addWebArchive(date, file, url) {
     return await adb.run("INSERT INTO web (date, file, url) VALUES (?, ?, ?)", [date, file, url]);
 }
+
+/**
+ * Searches uploads by title.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {Upload[]}
+ */
+export async function searchUploadsByTitle(keyword) {
+    return await adb.all("SELECT * FROM uploads WHERE LOWER(title) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches website vacancies by vacancy details.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {WebsiteVacancy[]}
+ */
+export async function searchVacanciesByDetails(keyword) {
+    return await adb.all("SELECT * FROM website_vacancies WHERE LOWER(vacancy) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches website texts by JSON content.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {WebsiteText[]}
+ */
+export async function searchTextsByJSON(keyword) {
+    return await adb.all("SELECT * FROM website_texts WHERE LOWER(json) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches website texts by URL.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {WebsiteText[]}
+ */
+export async function searchTextsByURL(keyword) {
+    return await adb.all("SELECT * FROM website_texts WHERE LOWER(url) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches website documents by URL.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {WebsiteDoc[]}
+ */
+export async function searchDocsByURL(keyword) {
+    return await adb.all("SELECT * FROM website_docs WHERE LOWER(url) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches website gallery by album name.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {WebsiteGallery[]}
+ */
+export async function searchGalleryByAlbumName(keyword) {
+    return await adb.all("SELECT * FROM website_gallery WHERE LOWER(album_name) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches website gallery by URL.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {WebsiteGallery[]}
+ */
+export async function searchGalleryByURL(keyword) {
+    return await adb.all("SELECT * FROM website_gallery WHERE LOWER(url) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches website news by JSON content.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {WebsiteNews[]}
+ */
+export async function searchNewsByJSON(keyword) {
+    return await adb.all("SELECT * FROM website_news WHERE LOWER(json) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches website news by URL.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {WebsiteNews[]}
+ */
+export async function searchNewsByURL(keyword) {
+    return await adb.all("SELECT * FROM website_news WHERE LOWER(url) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches DDG documents by name.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {DDGDoc[]}
+ */
+export async function searchDDGDocsByName(keyword) {
+    return await adb.all("SELECT * FROM ddg_docs WHERE LOWER(name) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches DDG documents by URL.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {DDGDoc[]}
+ */
+export async function searchDDGDocsByURL(keyword) {
+    return await adb.all("SELECT * FROM ddg_docs WHERE LOWER(url) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches HH.ru dumps by JSON content.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {HHRu[]}
+ */
+export async function searchHHRuDumpsByJSON(keyword) {
+    return await adb.all("SELECT * FROM hhru WHERE LOWER(json) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches web archives by URL.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {WebArchive[]}
+ */
+export async function searchWebArchivesByURL(keyword) {
+    return await adb.all("SELECT * FROM web WHERE LOWER(url) LIKE ?", [`%${keyword}%`]);
+}

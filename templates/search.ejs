@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Search | LetovoArchive", description: "Search for stuff on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Letovo Archive search</h1>
+
+        <form action="/search" method="post" enctype="multipart/form-data" class="center">
+            <select name="type">
+                <option value="" disabled selected>Type</option>
+                <% types.forEach(t => { %>
+                    <option value="<%= t %>" <%= type == t ? "selected" : "" %>><%= t[0].toUpperCase() + t.slice(1).toLowerCase() %></option>
+                <% }); %>
+            </select><br>
+            <label for="kw">Keyword</label><br>
+            <input type="text" name="kw" id="kw"><br>
+            <br>
+            <input type="submit">
+        </form>
+        
+        <!-- TODO: separate templates for displaying results -->
+        <% if(type === "uploads") { %>
+            <h2 class="title center">Results: user uploads</h2>
+            <div class="recent">
+                <% results.forEach(upload => { %>
+                    <div>
+                        <a href="/uploads/<%= upload.id %>">
+                            <%= upload.title %>
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+        
+        <% if(type === "news") { %>
+            <h2 class="title center">Results: news</h2>
+            <div class="recent">
+                <% results.forEach(news => { %>
+                    <div>
+                        <a href="/news/<%= news.id %>">
+                            <%= (JSON.parse(news.json).title) %>
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
+            <% } %>
+
+        <% if(type === "ddg") { %>
+            <h2 class="title center">Results: DuckDuckGo docs</h2>
+            <div class="recent">
+                <% results.forEach(doc => { %>
+                    <div>
+                        <a href="/ddg/<%= doc.id %>">
+                            <%= (doc.name) %>
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
+        <% if(type === "docs") { %>
+            <h2 class="title center">Results: website docs</h2>
+            <div class="recent">
+                <% results.forEach(doc => { %>
+                    <div>
+                        <a href="/docs/<%= doc.id %>">
+                            <%= (doc.url.split("/").reverse()[0]) %>
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
+        <% if(type === "gallery") { %>
+            <h2 class="title center">Results: gallery photos</h2>
+            <div class="recent">
+                <% results.forEach(photo => { %>
+                    <div>
+                        <a href="/gallery/<%= photo.id %>">
+                            <img src="<%= photo.url %>">
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
+        <% if(type === "text") { %>
+            <h2 class="title center">Results: text page changes</h2>
+            <div class="recent">
+                <% results.forEach(text => { %>
+                    <div>
+                        <a href="/text/<%= text.id %>">
+                            <%= JSON.parse(text.json).page.title %>
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
+        <% if(type === "vacancy") { %>
+            <h2 class="title center">Results: vacancies</h2>
+            <div class="recent">
+                <% results.forEach(vacancy => { %>
+                    <div>
+                        <a href="/vacancy/<%= vacancy.id %>">
+                            <%= JSON.parse(vacancy.vacancy).title %>
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
+        <% if(type === "web") { %>
+            <h2 class="title center">Results: web page dumps</h2>
+            <div class="recent">
+                <% results.forEach(web => { %>
+                    <div>
+                        <a href="/web/<%= web.id %>">
+                            <%= web.url %>
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
+        <%- include("footer") %>
+    </body>
+</html>
