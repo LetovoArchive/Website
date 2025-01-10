@@ -13,7 +13,7 @@ import cron from "node-cron";
 process.on("uncaughtException", e => console.error(e));
 process.on("unhandledRejection", e => console.error(e));
 
-const webArchiver = new api.WebArchiver(["letovo.ru", "letovo.site"]);
+const webArchiver = new api.WebArchiver(["letovo.online", "letovo.ru", "letovo.site"]);
 let ready = false;
 (async () => {
     await webArchiver.init();
@@ -324,7 +324,7 @@ app.post("/newweb", upload.none(), async (req, res) => {
 
     const archive = await webArchiver.archiveToMHTML(req.body.url);
     if(archive === null)
-        return res.status(400).send("bad request. should only be *.letovo.ru, *.letovo.site or letovo.ru");
+        return res.status(400).send("bad request. should only be *.letovo.online, letovo.online, *.letovo.ru, *.letovo.site or letovo.ru");
     const uuid = api.write((req.body.url.split("/").reverse()[0] || "index") + ".mhtml", archive);
     await api.addWebArchive(new Date().getTime(), uuid, req.body.url);
 
