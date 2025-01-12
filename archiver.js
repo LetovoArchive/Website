@@ -63,7 +63,7 @@ export async function archiveWebsite() {
     const vacancies = await archiver.archiveVacancies();
     for(const vacancy of Object.values(vacancies.json)) {
         const lastVacancy = storage.getLastVacancyByVacancyID(vacancy.id);
-        if(lastVacancy && lastVacancy.vacancy === JSON.stringify(vacancy)) continue;
+        if(lastVacancy/* && lastVacancy.vacancy === JSON.stringify(vacancy)*/) continue;
         await storage.addVacancy(vacancy.id, date(), JSON.stringify(vacancy));
     }
 
@@ -78,7 +78,7 @@ export async function archiveWebsite() {
     for(const album of gallery.json.items) {
         for(const photo of album.media) {
             const lastPhoto = storage.getLastPhotoByPhotoID(photo.id);
-            if(lastPhoto && lastPhoto.album_id == album.id && lastPhoto.album_name == album.title) continue;
+            if(lastPhoto/* && lastPhoto.album_id == album.id && lastPhoto.album_name == album.title*/) continue;
             await storage.addPhoto(photo.id, photo.original_url, date(), album.id, album.title);
         }
     }
