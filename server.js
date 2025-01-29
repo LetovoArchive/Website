@@ -38,6 +38,8 @@ const upload = multer({
     }
 });
 
+const fixEncoding = txt => Buffer.from(txt, "latin1").toString("utf-8");
+
 const app = express();
 app.use(express.static(join(import.meta.dirname, "static")));
 
@@ -294,10 +296,10 @@ app.post("/new", upload.array("files"), async (req, res) => {
     let uuids = [];
     await bot.telegram.sendMessage(parseInt(TG_ID), req.body.title);
     for(const file of req.files) {
-        uuids.push(await api.write(file.originalname, file.buffer));
+        uuids.push(await api.write(fixEncoding(file.originalname), file.buffer));
         await bot.telegram.sendDocument(parseInt(TG_ID), {
             source: file.buffer,
-            filename: file.originalname
+            filename: fixEncoding(file.originalname)
         });
     }
     const row = await api.addUpload(new Date().getTime(), ip, uuids.join(";"), req.body.title);
