@@ -169,7 +169,7 @@ const diffwith = (array, id, res, baseURL) => {
 };
 const diff = (text1, text2, res) => {
     res.send(loadEjs({
-        diff: Diff.diffLines(text1, text2)
+        diff: Diff.diffLines(text2, text1)
     }, "diff.ejs"));
 }
 
