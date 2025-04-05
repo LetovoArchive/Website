@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <% const json = JSON.parse(text.json); %>
 <html>
-    <%- include("head", { title: json.page.title + " | LetovoArchive", description: "Text page on the Letovo Archive" }) %>
+    <%- include("head", { title: json?.page?.title + " | LetovoArchive", description: "Text page on the Letovo Archive" }) %>
     <body>
         <%- include("header") %>
-        <h1 class="title center">Text page: <%= json.page.title %></h1>
+        <h1 class="title center">Text page: <%= json?.page?.title %></h1>
         
         <div class="center">
             Date: <%= new Date(parseInt(text.date)).toUTCString() %><br>
-            URL: <%= json.page.url %><br>
+            URL: <%= json?.page?.url %><br>
             <a href="/text/<%= text.id %>/diff">Create diff with the same URL</a><br>
             <a href="/text/<%= text.id %>/diff?all">Create diff with another URL</a><br>
             <%- include("jsonviewer", { json }) %>

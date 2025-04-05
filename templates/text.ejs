@@ -10,7 +10,7 @@
             <% texts.forEach(text => { %>
                 <div>
                     <a href="/text/<%= text.id %>">
-                        <%= JSON.parse(text.json).page.title %>
+                        <%= JSON.parse(text.json)?.page?.title %>
                     </a>
                 </div>
             <% }); %>
