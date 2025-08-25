@@ -136,3 +136,6 @@ package-lock.json
 data.db
 files/*
 !files/.gitkeep
+
+# Backups
+*.bak
