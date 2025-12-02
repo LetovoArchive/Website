@@ -123,6 +123,19 @@
             </div>
         <% } %>
 
+        <% if(type === "book") { %>
+            <h2 class="title center">Results: books</h2>
+            <div class="recent">
+                <% results.forEach(book => { %>
+                    <div>
+                        <a href="/book/<%= book.id %>">
+                            <%= book.title %>
+                        </a>
+                    </div>
+                <% }); %>
+            </div>
+        <% } %>
+
         <%- include("footer") %>
     </body>
 </html>

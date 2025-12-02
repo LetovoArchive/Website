@@ -410,7 +410,8 @@ const SEARCH_TYPES = [
     "uploads", "news",
     "ddg", "docs",
     "gallery", "text",
-    "vacancy", "web"
+    "vacancy", "web",
+    "book"
 ];
 
 app.get("/search", (_req, res) => res.send(loadEjs({
@@ -445,6 +446,8 @@ app.post("/search", upload.none(), async (req, res) => {
         results = await api.searchVacanciesByDetails(req.body.kw);
     else if(req.body.type === "web")
         results = await api.searchWebArchivesByURL(encodeURIComponent(req.body.kw));
+    else if(req.body.type === "book")
+        results = await api.searchBooks(req.body.kw);
     else
         return res.redirect("/search");
 
