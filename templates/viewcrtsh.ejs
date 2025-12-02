@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<% const json = JSON.parse(dump.json); %>
+<html>
+    <%- include("head", { title: new Date(parseInt(dump.date)).toUTCString() + " | LetovoArchive", description: "CRT.sh dump on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">CRT.sh dump: <%= new Date(parseInt(dump.date)).toUTCString() %></h1>
+        
+        <div class="center">
+            <a href="/crtsh/<%= dump.id %>/diff">Create diff</a><br>
+            <%- include("jsonviewer", { json }) %>
+        </div>
+
+        <%- include("footer") %>
+    </body>
+</html>

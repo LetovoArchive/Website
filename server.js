@@ -25,7 +25,7 @@ process.on("SIGINT", async () => {
     process.exit(0);
 });
 
-const { EMAIL, TG_TOKEN, TG_ID, PASSWORD } = process.env;
+const { EMAIL, TG_TOKEN, TG_ID, PASSWORD, LIB_USERNAME, LIB_PASSWORD } = process.env;
 const bot = new Telegraf(TG_TOKEN);
 
 const rateLimits = {};
@@ -56,7 +56,8 @@ app.get("/", async (_req, res) => {
         recentNews: await api.getLast10News(),
         recentTexts: await api.getLast10Texts(),
         recentVacancies: await api.getLast10Vacancies(),
-        recentWebArchives: await api.getLast10WebArchives()
+        recentWebArchives: await api.getLast10WebArchives(),
+        recentBooks: await api.getLast10Books()
     }, "index.ejs"));
 });
 
@@ -84,6 +85,8 @@ app.get("/ddg", async (req, res) => paginate(req, res, await api.getAllDDGDocs()
 app.get("/gallery", async (req, res) => paginate(req, res, await api.getAllPhotos(), "photos", "gallery.ejs"));
 app.get("/news", async (req, res) => paginate(req, res, await api.getAllNews(), "news", "news.ejs"));
 app.get("/hhru", async (req, res) => paginate(req, res, await api.getAllHHRuDumps(), "dumps", "hhru.ejs"));
+app.get("/crtsh", async (req, res) => paginate(req, res, await api.getAllCRTShDumps(), "dumps", "crtsh.ejs"));
+app.get("/book", async (req, res) => paginate(req, res, await api.getAllBooks(), "books", "book.ejs"));
 app.get("/web", async (req, res) => paginate(req, res, await api.getAllWebArchives(), "webArchives", "web.ejs"));
 
 const download = async (res, uuid, forceName = null) => {
@@ -222,7 +225,59 @@ app.get("/hhru/:left/diff/:right", async (req, res) => {
         JSON.stringify(JSON.parse(right.json), null, 4),
         res
     );
-})
+});
+
+app.get("/crtsh/:id", async (req, res) => {
+    const dump = await api.getCRTShDumpByID(req.params.id);
+    if(!dump) return res.status(404).send("not found");
+    res.status(200).send(loadEjs({ dump }, "viewcrtsh.ejs"))
+});
+
+app.get("/crtsh/:id/diff", async (req, res) => {
+    const dump = await api.getCRTShDumpByID(req.params.id);
+    if(!dump) return res.status(404).send("not found");
+
+    diffwith(await api.getAllCRTShDumps(), parseInt(req.params.id), res, "crtsh");
+});
+app.get("/crtsh/:left/diff/:right", async (req, res) => {
+    const left = await api.getCRTShDumpByID(req.params.left);
+    if(!left) return res.status(404).send("not found");
+    const right = await api.getCRTShDumpByID(req.params.right);
+    if(!right) return res.status(404).send("not found");
+    diff(
+        JSON.stringify(JSON.parse(left.json), null, 4),
+        JSON.stringify(JSON.parse(right.json), null, 4),
+        res
+    );
+});
+
+app.get("/book/:id", async (req, res) => {
+    const book = await api.getBookByID(req.params.id);
+    if(!book) return res.status(404).send("not found");
+    res.status(200).send(loadEjs({ book }, "viewbook.ejs"));
+});
+
+app.get("/book/:id/diff", async (req, res) => {
+    const book = await api.getBookByID(req.params.id);
+    if(!book) return res.status(404).send("not found");
+
+    diffwith(await api.getAllBooksByLink(book.link), parseInt(req.params.id), res, "book");
+});
+/** @param {import("./storage.js").Book} book */
+function getBookAsText(book) {
+    return [`Title: ${book.title}`, `Identifier: ${book.identifier}`, `URL: ${book.link}`].join("\n=====\n");
+}
+app.get("/book/:left/diff/:right", async (req, res) => {
+    const left = await api.getBookByID(req.params.left);
+    if(!left) return res.status(404).send("not found");
+    const right = await api.getBookByID(req.params.right);
+    if(!right) return res.status(404).send("not found");
+    diff(
+        getBookAsText(left),
+        getBookAsText(right),
+        res
+    );
+});
 
 app.get("/vacancy/:id", async (req, res) => {
     const vacancy = await api.getVacancyByID(req.params.id);
@@ -404,6 +459,6 @@ app.listen(9890);
 
 cron.schedule("0 0 * * *", async () => {
     console.log("Started archiving...");
-    await api.archiveAll(EMAIL);
+    await api.archiveAll(EMAIL, LIB_USERNAME, LIB_PASSWORD);
     console.log("Archived everything!!");
 });

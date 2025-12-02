@@ -77,6 +77,22 @@
  * @property {string} url The URL of the archive
  */
 
+/**
+ * @typedef {object} CRTSh
+ * @property {number} id ID of the archived dump
+ * @property {number} date The date of archival
+ * @property {string} json The JSON dump
+ */
+
+/**
+ * @typedef {object} Book
+ * @property {number} id ID of the book
+ * @property {number} date The date of archival
+ * @property {string} title Book title
+ * @property {string} identifier Book identifier
+ * @property {string} link Link to the book
+ */
+
 
 
 import sqlite3 from "sqlite3";
@@ -145,6 +161,18 @@ db.run(`CREATE TABLE IF NOT EXISTS web (
     date INTEGER,
     file TEXT,
     url TEXT
+)`);
+db.run(`CREATE TABLE IF NOT EXISTS crtsh (
+    id INTEGER PRIMARY KEY,
+    date INTEGER,
+    json TEXT
+)`);
+db.run(`CREATE TABLE IF NOT EXISTS library (
+    id INTEGER PRIMARY KEY,
+    date INTEGER,
+    title TEXT,
+    identifier TEXT,
+    link TEXT
 )`);
 
 const adb = (func, query, params) => new Promise((resolve, reject) => {
@@ -670,6 +698,123 @@ export async function addHHRuDump(date, json) {
 }
 
 /**
+ * Gets the last CRTsh dump.
+ * 
+ * @returns {HHRu} The dump
+ */
+export async function getLastCRTShDump() {
+    return await adb.get("SELECT * FROM crtsh ORDER BY date DESC LIMIT 1");
+}
+
+/**
+ * Gets a CRT.sh dump by its ID.
+ * 
+ * @param {number} id The ID
+ * @returns {CRTSh} The dump
+ */
+export async function getCRTShDumpByID(id) {
+    return await adb.get("SELECT * FROM crtsh WHERE id = ?", [id]);
+}
+
+/**
+ * Gets all CRT.sh dumps.
+ * 
+ * @returns {CRTSh[]} The dumps
+ */
+export async function getAllCRTShDumps() {
+    return await adb.all("SELECT * FROM crtsh ORDER BY date DESC");
+}
+
+/**
+ * Adds an CRT.sh dump to the database.
+ * 
+ * @param {number} date The date of the dump
+ * @param {string} json The JSON dump
+ */
+export async function addCRTShDump(date, json) {
+    return await adb.run("INSERT INTO crtsh (date, json) VALUES (?, ?)", [date, json]);
+}
+
+/**
+ * Gets the last book.
+ * 
+ * @returns {Book} The book
+ */
+export async function getLastBook() {
+    return await adb.get("SELECT * FROM library ORDER BY date DESC LIMIT 1");
+}
+
+/**
+ * Gets a book by its ID.
+ * 
+ * @param {number} id The ID
+ * @returns {Book} The dump
+ */
+export async function getBookByID(id) {
+    return await adb.get("SELECT * FROM library WHERE id = ?", [id]);
+}
+
+/**
+ * Gets the last book by its identifier.
+ * 
+ * @param {string} identifier The Identifier
+ * @returns {Book} The book
+ */
+export async function getLastBookByIdentifier(identifier) {
+    return await adb.get("SELECT * FROM library WHERE identifier = ? ORDER BY date DESC LIMIT 1", [identifier]);
+}
+
+/**
+ * Gets the last book by its URL.
+ * 
+ * @param {string} link The URL
+ * @returns {Book} The book
+ */
+export async function getLastBookByLink(link) {
+    return await adb.get("SELECT * FROM library WHERE link = ? ORDER BY date DESC LIMIT 1", [link]);
+}
+
+/**
+ * Gets all books
+ * 
+ * @returns {Book[]} The books
+ */
+export async function getAllBooks() {
+    return await adb.all("SELECT * FROM library ORDER BY date DESC");
+}
+
+/**
+ * Gets all books
+ * 
+ * @param {string} link Book URL
+ * @returns {Book[]} The books
+ */
+export async function getAllBooksByLink(link) {
+    return await adb.all("SELECT * FROM library WHERE link = ? ORDER BY date DESC", [link]);
+}
+
+/**
+ * Gets the last 10 books.
+ * 
+ * @returns {Book[]}
+ */
+export async function getLast10Books() {
+    return await adb.all("SELECT * FROM library ORDER BY date DESC LIMIT 10");
+}
+
+/**
+ * Adds a library book to the database.
+ * 
+ * @param {number} date The date of the dump
+ * @param {string} title The book title
+ * @param {string} identifier The book identifier
+ * @param {string} link The book URL
+ */
+export async function addBook(date, title, identifier, link) {
+    return await adb.run("INSERT INTO library (date, title, identifier, link) VALUES (?, ?, ?, ?)", [date, title, identifier, link]);
+}
+
+/**
  * Gets the last 10 archived pages.
  * 
  * @returns {WebArchive[]}
@@ -826,6 +971,27 @@ export async function searchDDGDocsByURL(keyword) {
  */
 export async function searchHHRuDumpsByJSON(keyword) {
     return await adb.all("SELECT * FROM hhru WHERE LOWER(json) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches CRT.sh dumps by JSON content.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {CRTSh[]}
+ */
+export async function searchCRTShDumpsByJSON(keyword) {
+    return await adb.all("SELECT * FROM crtsh WHERE LOWER(json) LIKE ?", [`%${keyword}%`]);
+}
+
+/**
+ * Searches library books by keyword.
+ * 
+ * @param {string} keyword The keyword to search for
+ * @returns {Book[]}
+ */
+export async function searchBooks(keyword) {
+    const kw = `%${keyword}%`;
+    return await adb.all("SELECT * FROM library WHERE LOWER(title) LIKE ? OR LOWER(identifier) LIKE ? OR LOWER(link) LIKE ?", [kw, kw, kw]);
 }
 
 /**

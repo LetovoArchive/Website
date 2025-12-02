@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: "Library books | LetovoArchive", description: "Library dumps on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Library books</h1>
+        
+        <h2 class="title center">Page <%= page %></h2>
+        <div class="recent">
+            <% books.forEach(book => { %>
+                <div>
+                    <a href="/book/<%= book.id %>">
+                        <%= book.title %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+        <%- include("pagination", { page, lastPage }) %>
+
+        <%- include("footer") %>
+    </body>
+</html>

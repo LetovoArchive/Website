@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <%- include("head", { title: book.title + " | LetovoArchive", description: "Book dump on the Letovo Archive" }) %>
+    <body>
+        <%- include("header") %>
+        <h1 class="title center">Book dump: <%= book.title %></h1>
+        <h3 class="title center">(<%= new Date(parseInt(book.date)).toUTCString() %>)</h3>
+        
+        <div class="center">
+            <a href="/book/<%= book.id %>/diff">Create diff</a><br>
+            <h4>Identifier: <%= book.identifier %></h4>
+            <h4>URL: <a href="<%= book.link %>"><%= book.link %></a></h4>
+        </div>
+
+        <%- include("footer") %>
+    </body>
+</html>

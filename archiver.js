@@ -40,6 +40,17 @@ export async function archiveHHRu(email) {
 }
 
 /**
+ * Archives CRT.sh records.
+ */
+export async function archiveCRTSh() {
+    const archiver = new simple.CrtSHArchiver();
+    const res = await archiver.archiveDomains();
+    const lastRes = await storage.getLastCRTShDump();
+    if(lastRes && JSON.stringify(res) === lastRes.json) return;
+    await storage.addCRTShDump(date(), JSON.stringify(res));
+}
+
+/**
  * Archives everything on Letovo's website.
  */
 export async function archiveWebsite() {
@@ -84,6 +95,16 @@ export async function archiveWebsite() {
     }
 }
 
+export async function archiveLibrary(username, password) {
+    const archiver = new simple.LibraryArchiver(username, password);
+    const res = await archiver.archiveLibrary();
+    for(const book of res) {
+        const lastBook = storage.getLastBookByLink(book.link);
+        if(lastBook && lastBook.title === book.title && lastBook.identifier === book.identifier) continue;
+        await storage.addBook(date(), book.title, book.identifier, book.link);
+    }
+}
+
 async function wrapTryCatch(func) {
     try {
         await func();
@@ -96,9 +117,13 @@ async function wrapTryCatch(func) {
  * Archives everything Letovo!
  * 
  * @param {string} email The e-mail to use in the user agent for HH.ru
+ * @param {string} libUsername Letovo username to use for library dumps
+ * @param {string} libPassword Letovo password to use for library dumps
  */
-export async function archiveAll(email) {
+export async function archiveAll(email, libUsername = "", libPassword = "") {
     await wrapTryCatch(async () => await archiveDDGDocs());
-    await wrapTryCatch(async () => await archiveHHRu(email));
+    if(email)  await wrapTryCatch(async () => await archiveHHRu(email));
+    await wrapTryCatch(async () => await archiveCRTSh());
     await wrapTryCatch(async () => await archiveWebsite());
+    if(libUsername && libPassword) await wrapTryCatch(async () => await archiveLibrary(libUsername, libPassword)); // longest, keep last
 }

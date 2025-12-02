@@ -93,6 +93,17 @@
             <% }); %>
         </div>
 
+        <h2 class="title center">Recent library books</h2>
+        <div class="recent">
+            <% recentBooks.forEach(book => { %>
+                <div>
+                    <a href="/book/<%= book.id %>">
+                        <%= book.title %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+
         <%- include("footer") %>
     </body>
 </html>
